@@ -13,7 +13,8 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=256)),
             ('empId', self.gf('django.db.models.fields.CharField')(max_length=256)),
-            ('startDate', self.gf('django.db.models.fields.DateTimeField')()),
+            ('startDate', self.gf('django.db.models.fields.DateField')()),
+            ('leave_type', self.gf('django.db.models.fields.CharField')(max_length=2)),
         ))
         db.send_create_signal('holiTrack', ['Employee'])
 
@@ -28,8 +29,9 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Employee'},
             'empId': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'leave_type': ('django.db.models.fields.CharField', [], {'max_length': '2'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
-            'startDate': ('django.db.models.fields.DateTimeField', [], {})
+            'startDate': ('django.db.models.fields.DateField', [], {})
         }
     }
 

@@ -15,5 +15,5 @@ class Employee (models.Model):
         return self.name;
     name = models.CharField(max_length=256)
     empId = models.CharField(max_length=256)
-    startDate = models.DateTimeField('start Date')
+    startDate = models.DateField('start Date')
     leave_type = models.CharField(max_length=2, choices=LEAVE_TYPES_CHOICES)
