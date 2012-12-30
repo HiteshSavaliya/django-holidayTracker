@@ -2,7 +2,8 @@
 from django.shortcuts import render_to_response
 from holiTrack.models import Employee
 #from django.http import HttpResponse
-from django.http import Http404
+#from django.http import Http404
+from django.shortcuts import get_object_or_404
 
 
 def home(request):
@@ -14,9 +15,10 @@ def home(request):
     return render_to_response('templates/homepage.html',{'list_of_employees': list_of_employees})
 
 def details(request, emp_id):
-    try:
-        e = Employee.objects.get(empId=emp_id);
-    except Employee.DoesNotExist:
-        raise Http404
+    #try:
+    #    e = Employee.objects.get(empId=emp_id);
+    #except Employee.DoesNotExist:
+    #    raise Http404
+    #return render_to_response('templates/details.html',{'employee':e})
+    e = get_object_or_404(Employee,empId=emp_id)
     return render_to_response('templates/details.html',{'employee':e})
-    
