@@ -7,6 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'holiTrack.views.home', name='home'),
+    url(r'^employee/(?P<emp_id>\d+)/$', 'holiTrack.views.details', name='details'),
     # url(r'^holidayTracker/', include('holidayTracker.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
