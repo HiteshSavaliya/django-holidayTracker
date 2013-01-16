@@ -4,6 +4,7 @@ from holiTrack.models import Employee
 #from django.http import HttpResponse
 #from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django.template import RequestContext
 
 
 def home(request):
@@ -21,4 +22,10 @@ def details(request, emp_id):
     #    raise Http404
     #return render_to_response('templates/details.html',{'employee':e})
     e = get_object_or_404(Employee,empId=emp_id)
-    return render_to_response('templates/details.html',{'employee':e})
+    return render_to_response('templates/details.html',{'employee':e},context_instance=RequestContext(request))
+
+def leave(request,emp_id):
+    e = get_object_or_404(Employee,empId=emp_id)
+    selected_choices = request.POST['leaveType']
+    e.leave_type = selected_choices
+    return render_to_response('templates/details.html',{'employee':e},context_instance=RequestContext(request)) 

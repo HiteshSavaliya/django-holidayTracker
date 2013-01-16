@@ -1,6 +1,8 @@
 from django.db import models
 
-LEAVE_TYPES_CHOICES = (
+class Employee (models.Model):
+    
+    LEAVE_TYPES_CHOICES = (
         ('0', 'Working'),
         ('1', 'Sick'),
         ('2', 'Vacation'),
@@ -9,8 +11,7 @@ LEAVE_TYPES_CHOICES = (
         ('5','Weekend'),
         ('6','Other'),
     )
-
-class Employee (models.Model):
+    
     def __unicode__(self):
         return self.name;
     name = models.CharField(max_length=256)
