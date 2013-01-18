@@ -12,7 +12,7 @@ class EmployeeAdmin(admin.ModelAdmin):
 #	('Leave type', {'fields' : ['leave_type']})
 #	]
 	list_display = ('name','remainingLeave','leave','total')
-#	readonly_fields = ('remainingLeave','total')
+	readonly_fields = ('remainingLeave','total')
 	search_fields = ['name']
 #	exclude = ('calenderYear',)
 	
