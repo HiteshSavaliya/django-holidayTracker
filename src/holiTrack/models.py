@@ -19,8 +19,8 @@ class Employee (models.Model):
     
     name = models.CharField(max_length=256)
 #    empId = models.AutoField(primary_key=True)
-    calenderYear = models.DateField('Calender Year')
-    startDate = models.DateField('start Date')
+    calenderYear = models.DateField('Calender Year',default=datetime.now())
+    startDate = models.DateField('start Date',default=datetime.now())
     remainingLeave = models.DecimalField('Remaining leave',max_digits=5,decimal_places=2)
     leave = models.DecimalField ('Applied leave',max_digits=5,decimal_places=2)
     total = models.DecimalField(max_digits=5,decimal_places=2)
