@@ -22,10 +22,11 @@ class Employee (models.Model):
     calenderYear = models.DateField('Calender Year')
     startDate = models.DateField('start Date')
     remainingLeave = models.DecimalField('Remaining leave',max_digits=5,decimal_places=2)
-    leave = models.DecimalField ('Apply leave',max_digits=5,decimal_places=2)
+    leave = models.DecimalField ('Applied leave',max_digits=5,decimal_places=2)
     total = models.DecimalField(max_digits=5,decimal_places=2)
     leave_type = models.CharField(max_length=2, choices=LEAVE_TYPES_CHOICES)
     
     def __init__(self,*args,**kwargs):
+        print "__init__"
         models.Model.__init__(self,*args,**kwargs)
         self.calenderYear = timezone.now()

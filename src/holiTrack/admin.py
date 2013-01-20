@@ -31,11 +31,10 @@ class EmployeeAdmin(admin.ModelAdmin):
 #		logger.log(1, "Request %s",request)
 #		logger.log(1, "obj %s",obj)
 #		logger.log(1,"change %s", change)
-#		if change == False:
-#			self.save_new_model(request, obj, form)
-#		else:
-		self.update_existing_model(request, obj, form)
-		obj.save();
+		if change == False:
+			self.save_new_model(request, obj, form)
+		else:
+			self.update_existing_model(request, obj, form)
 		
 	def save_new_model(self,request,obj,form):
 		logger.log(1, "New model")
@@ -54,20 +53,48 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 		obj.remainingLeave = 20.0
 		obj.total = 20.0
+		obj.save()
 		
 	def update_existing_model(self,request,obj,form):
+		print "Update_Existing_model"
 		
-		applyingLeave = request.POST['leave']
-		print 'update ' + repr(applyingLeave)
+		appliedLeave = request.POST['leave']
 # 		Make sure applying leave is less than total allowed
-		print 'value of remaining' + repr(obj.remainingLeave)
-		if Decimal(applyingLeave) < Decimal(obj.remainingLeave):
-			tmp = Decimal(obj.remainingLeave) - Decimal(applyingLeave)
-			print 'value of new remaining' + repr(tmp)
-			if Decimal(tmp) >= 0.0:
-				obj.remainingLeave = Decimal(tmp)
-		else:
-			print 'there is pro'
-		obj.save();
+#		print 'value of remaining' + repr(obj.remainingLeave)
 		
+#		print "from request Object"
+#		print obj.total
+#		print obj.leave
+#		print obj.remainingLeave
+		
+#		Find the object
+		e = Employee.objects.get(name=obj)
+		
+		if e is not None:
+#			print "Old Object to be changed" + repr(e)
+#			print e.total
+#			print e.leave
+#			print e.remainingLeave
+			if e.remainingLeave == e.total and Decimal(appliedLeave) < 0.0:
+				print 'This is not acceptable'
+			else:
+				newAppliedLeave = Decimal(appliedLeave ) + Decimal(e.leave)
+				newRemainingLeave = Decimal(e.remainingLeave) - Decimal(appliedLeave) 
+				newTotal = Decimal(newAppliedLeave) + Decimal(newRemainingLeave)
+		
+	#			print "New values"
+	#			print Decimal(newTotal)
+	#			print Decimal(newAppliedLeave)
+	#			print Decimal(newRemainingLeave)
+	
+				
+				if Decimal(newTotal) == Decimal(e.total) or Decimal(obj.total):
+					if Decimal(newRemainingLeave) >= Decimal(0.0):
+						print 'value of new remaining' + repr(newRemainingLeave)
+						obj.remainingLeave = Decimal(newRemainingLeave)
+						obj.leave = Decimal(newAppliedLeave)
+						obj.save()
+				else:
+					print 'there is pro'
+			
 admin.site.register(Employee,EmployeeAdmin)
