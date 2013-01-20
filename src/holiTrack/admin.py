@@ -1,5 +1,8 @@
 from holiTrack.models import Employee
 from django.contrib import admin
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render_to_response
+from django.template.context import RequestContext
 from decimal import *
 import logging
 
@@ -58,9 +61,9 @@ class EmployeeAdmin(admin.ModelAdmin):
 	def update_existing_model(self,request,obj,form):
 		print "Update_Existing_model"
 		
-		appliedLeave = request.POST['leave']
+		appliedLeave = self.calculateApplyingLeave(request)
 # 		Make sure applying leave is less than total allowed
-#		print 'value of remaining' + repr(obj.remainingLeave)
+		print 'value of applied leave' + repr(appliedLeave)
 		
 #		print "from request Object"
 #		print obj.total
@@ -68,33 +71,29 @@ class EmployeeAdmin(admin.ModelAdmin):
 #		print obj.remainingLeave
 		
 #		Find the object
-		e = Employee.objects.get(name=obj)
+		e = get_object_or_404(Employee,id=obj.id)
+#		e = Employee.objects.get(name=obj)
+
+		newAppliedLeave = Decimal(e.leave) + Decimal(appliedLeave)
+		newRemainingLeave = 0.0
 		
-		if e is not None:
-#			print "Old Object to be changed" + repr(e)
-#			print e.total
-#			print e.leave
-#			print e.remainingLeave
-			if e.remainingLeave == e.total and Decimal(appliedLeave) < 0.0:
-				print 'This is not acceptable'
+		print "New applied leave " + repr(newAppliedLeave)
+		
+		if Decimal(newAppliedLeave)  <= Decimal(e.total) and Decimal(newAppliedLeave) >= 0.0:
+			newRemainingLeave = Decimal(e.total) - Decimal(newAppliedLeave)
+			print "New applied Remaining " + repr(newRemainingLeave)
+			if Decimal(newRemainingLeave) >= 0.0 and Decimal(newRemainingLeave) <= Decimal(e.total):
+				obj.remainingLeave = Decimal(newRemainingLeave)
+				obj.leave = Decimal(newAppliedLeave)
+				obj.save()
 			else:
-				newAppliedLeave = Decimal(appliedLeave ) + Decimal(e.leave)
-				newRemainingLeave = Decimal(e.remainingLeave) - Decimal(appliedLeave) 
-				newTotal = Decimal(newAppliedLeave) + Decimal(newRemainingLeave)
-		
-	#			print "New values"
-	#			print Decimal(newTotal)
-	#			print Decimal(newAppliedLeave)
-	#			print Decimal(newRemainingLeave)
-	
-				
-				if Decimal(newTotal) == Decimal(e.total) or Decimal(obj.total):
-					if Decimal(newRemainingLeave) >= Decimal(0.0):
-						print 'value of new remaining' + repr(newRemainingLeave)
-						obj.remainingLeave = Decimal(newRemainingLeave)
-						obj.leave = Decimal(newAppliedLeave)
-						obj.save()
-				else:
-					print 'there is pro'
+				print 'Not Valid NUMBER'
+		else:
+			print 'Not valid  number'
+			self.message_user(request, "Value %s for Applying Leave is not valid" % appliedLeave)
+#			return render_to_response('templates/500.html',{}) #,context_instance=RequestContext(request))	
+			
+	def calculateApplyingLeave(self,request):
+		return request.POST['leave']
 			
 admin.site.register(Employee,EmployeeAdmin)
