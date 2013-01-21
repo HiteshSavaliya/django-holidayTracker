@@ -22,7 +22,9 @@ class Employee (models.Model):
     calenderYear = models.DateField('Calender Year',default=datetime.now())
     startDate = models.DateField('start Date',default=datetime.now())
     remainingLeave = models.DecimalField('Remaining leave',max_digits=5,decimal_places=2)
-    leave = models.DecimalField ('Applied leave',max_digits=5,decimal_places=2)
+    leave = models.DecimalField ('Applied leave',default=0.0,max_digits=5,decimal_places=2)
+    leaveFrom = models.DateField ('From',blank=True,null=True)
+    leaveTo = models.DateField ('To',blank=True,null=True)
     total = models.DecimalField(max_digits=5,decimal_places=2)
     leave_type = models.CharField(max_length=2, choices=LEAVE_TYPES_CHOICES)
     
