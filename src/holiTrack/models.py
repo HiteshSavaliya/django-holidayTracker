@@ -1,6 +1,6 @@
 from django.db import models
-from django.utils import timezone
-from datetime import datetime
+import datetime
+
 
 class Employee (models.Model):
     
@@ -19,8 +19,8 @@ class Employee (models.Model):
     
     name = models.CharField(max_length=256)
 #    empId = models.AutoField(primary_key=True)
-    calenderYear = models.DateField('Calender Year',default=datetime.now())
-    startDate = models.DateField('start Date',default=datetime.now())
+    calenderYear = models.DateField('Calender Year',blank=True,null=True)
+    startDate = models.DateField('start Date',blank=True,null=True)
     remainingLeave = models.DecimalField('Remaining leave',max_digits=5,decimal_places=2)
     leave = models.DecimalField ('Applied leave',default=0.0,max_digits=5,decimal_places=2)
     leaveFrom = models.DateField ('From',blank=True,null=True)
@@ -31,4 +31,5 @@ class Employee (models.Model):
     def __init__(self,*args,**kwargs):
         print "__init__"
         models.Model.__init__(self,*args,**kwargs)
-        self.calenderYear = timezone.now()
+        self.calenderYear = datetime.date(2013,1,1)
+        self.startDate = self.calenderYear
