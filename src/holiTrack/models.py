@@ -1,5 +1,4 @@
 from django.db import models
-import datetime
 
 class Employee (models.Model):
     
@@ -32,3 +31,10 @@ class Employee (models.Model):
 #        models.Model.__init__(self,*args,**kwargs)
 #        self.calenderYear = datetime.date(datetime.date.today().year,1,1)
 #        self.startDate = self.calenderYear
+
+
+class ApprovedLeaveHistory(models.Model):
+#    leaveId = models.AutoField()
+    leave_start_date = models.DateField('Start Date')
+    leave_end_date = models.DateField('End Date')
+    associated_with_employee = models.ForeignKey(Employee)

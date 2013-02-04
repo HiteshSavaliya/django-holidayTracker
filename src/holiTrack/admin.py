@@ -1,4 +1,4 @@
-from holiTrack.models import Employee
+from holiTrack.models import Employee, ApprovedLeaveHistory
 from django.contrib import admin
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render_to_response
@@ -105,6 +105,13 @@ class EmployeeAdmin(admin.ModelAdmin):
 			if Decimal(newRemainingLeave) >= 0.0 and Decimal(newRemainingLeave) <= Decimal(e.total):
 				obj.remainingLeave = Decimal(newRemainingLeave)
 				obj.leave = Decimal(newAppliedLeave)
+				
+				#Update leave history
+				startDate = obj.leaveFrom
+				endDate = obj.leaveTo
+				e.approvedleavehistory_set.create(leave_start_date=startDate,leave_end_date=endDate)
+				e.save()
+				
 				obj.save()
 			else:
 				print 'Not Valid NUMBER'
