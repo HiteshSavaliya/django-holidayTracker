@@ -1,13 +1,9 @@
 from holiTrack.models import Employee, ApprovedLeaveHistory
+from decimal import Decimal
 from django.contrib import admin
 from django.shortcuts import get_object_or_404
-from django.shortcuts import render_to_response
-from django.core import exceptions
-from django.template.context import RequestContext
-from decimal import *
 import logging
-#from django.utils.datetime_safe import datetime,time
-from datetime import datetime, time, timedelta
+from datetime import timedelta
 import datetime
 from dateutil import rrule
 
@@ -20,7 +16,7 @@ class EmployeeAdmin(admin.ModelAdmin):
 #	('Leave type', {'fields' : ['leave_type']})
 #	]
 	list_display = ('name','remainingLeave','leave','total')
-	readonly_fields = ('remainingLeave','total','leave')
+	readonly_fields = ('remainingLeave','total','leave','calenderYear')
 	search_fields = ['name']
 #	exclude = ('calenderYear',)
 	
@@ -57,21 +53,29 @@ class EmployeeAdmin(admin.ModelAdmin):
 		obj.calenderYear = datetime.date(datetime.date.today().year,1,1)
 #		Remaining leave should be calculated based equation:
 
-#		if startDate is greater than current year
-#		noOfLeavesPerweek = 20.0/52
-#		noOfLeavesPerMonth = 20.0/12
 		total_days_in_current_year = (obj.calenderYear.replace(month=12,day=31) - obj.calenderYear).days 
 		eligible_leave_count_per_day = 20.0/total_days_in_current_year
 		
-#		calculate number of Weeks = From joining date to end of year
-#		calculate number of months =  from joining date to end of year
-#		obj.Total = noOfMonths * noOfLeavesPerMonth 
 		total_number_of_days = self.no_of_days_from_start_to_end_date(obj)
 		print 'No of days from start date to end of the year is:'
 		print total_number_of_days
 
 		obj.remainingLeave = total_number_of_days * eligible_leave_count_per_day
 		obj.total = total_number_of_days * eligible_leave_count_per_day
+		
+#		calculate number of Weeks = From joining date to end of year
+#		start_date = obj.startDate
+#
+##last day of the year
+#		end_date = datetime.date(datetime.date.today().year,12,31)
+#		total_weeks_in_current_year = self.no_of_weeks_from_start_to_end_date(start_date, end_date) 
+#		print 'No of weeks from start date to end of the year is:'
+#		print total_weeks_in_current_year
+#		
+#		eligible_leave_count_per_week = (20.0/52.0)
+#		obj.remainingLeave = total_weeks_in_current_year * eligible_leave_count_per_week 
+#		obj.total = obj.remainingLeave
+		
 		obj.save()
 		
 	def update_existing_model(self,request,obj,form):
@@ -159,10 +163,7 @@ class EmployeeAdmin(admin.ModelAdmin):
 #		print lastDateOfCalenderYear.isoformat()
 		return (lastDateOfCalenderYear - obj.startDate).days
 		
-	def no_of_weeks_from_start_to_end_date(self,obj):
-		start_date = obj.startDate 
-		end_date = datetime.date(obj.calenderYear.date.year,12,31)
-		
+	def no_of_weeks_from_start_to_end_date(self,start_date,end_date):
 		weeks = rrule.rrule(rrule.WEEKLY, dtstart=start_date, until=end_date)
 		return weeks.count()
 	
