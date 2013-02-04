@@ -1,7 +1,6 @@
 from django.db import models
 import datetime
 
-
 class Employee (models.Model):
     
     LEAVE_TYPES_CHOICES = (
@@ -20,7 +19,7 @@ class Employee (models.Model):
     name = models.CharField(max_length=256)
 #    empId = models.AutoField(primary_key=True)
     calenderYear = models.DateField('Calender Year',blank=True,null=True)
-    startDate = models.DateField('start Date',blank=True,null=True)
+    startDate = models.DateField('Join Date',blank=True,null=True)
     remainingLeave = models.DecimalField('Remaining leave',max_digits=5,decimal_places=2)
     leave = models.DecimalField ('Applied leave',default=0.0,max_digits=5,decimal_places=2)
     leaveFrom = models.DateField ('From',blank=True,null=True)
@@ -28,8 +27,8 @@ class Employee (models.Model):
     total = models.DecimalField(max_digits=5,decimal_places=2)
     leave_type = models.CharField(max_length=2, choices=LEAVE_TYPES_CHOICES)
     
-    def __init__(self,*args,**kwargs):
-        print "__init__"
-        models.Model.__init__(self,*args,**kwargs)
-        self.calenderYear = datetime.date(2013,1,1)
-        self.startDate = self.calenderYear
+#    def __init__(self,*args,**kwargs):
+#        print "Employee __init__"
+#        models.Model.__init__(self,*args,**kwargs)
+#        self.calenderYear = datetime.date(datetime.date.today().year,1,1)
+#        self.startDate = self.calenderYear
