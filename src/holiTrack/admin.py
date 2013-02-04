@@ -9,6 +9,17 @@ from dateutil import rrule
 
 logger = logging.getLogger(__name__)
 
+class ApprovedLeaveHistoryInline(admin.TabularInline):
+	model = ApprovedLeaveHistory
+	can_delete = False #This will prevent history from deletion
+	readonly_fields = ('leave_start_date', 'leave_end_date')
+	fieldsets = (
+		('History', {
+            'classes': ('collapse',),
+            'fields': ('leave_start_date', 'leave_end_date')
+        }),
+    )
+
 class EmployeeAdmin(admin.ModelAdmin):
 #	fieldsets = [
 #	('Employee Details', {'fields': ['name','empId']}),
@@ -32,6 +43,7 @@ class EmployeeAdmin(admin.ModelAdmin):
             'fields': ('calenderYear', 'startDate')
         }),
     )
+	inlines = [ApprovedLeaveHistoryInline]
 	
 	def save_model(self,request,obj,form,change):
 		print 'Save_model'
@@ -168,3 +180,4 @@ class EmployeeAdmin(admin.ModelAdmin):
 		return weeks.count()
 	
 admin.site.register(Employee,EmployeeAdmin)
+#admin.site.register(ApprovedLeaveHistory)
