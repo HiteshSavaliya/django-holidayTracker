@@ -15,4 +15,11 @@
 		<nature>org.python.pydev.pythonNature</nature>
 		<nature>org.python.pydev.django.djangoNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src/holiTrack/england-and-wales.ics</name>
+			<type>1</type>
+			<location>/Users/hiteshsavaliya/Documents/workspace/holidayTracker/src/holiTrack/england-and-wales.ics</location>
+		</link>
+	</linkedResources>
 </projectDescription>

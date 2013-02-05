@@ -7,6 +7,8 @@ from datetime import timedelta
 import datetime
 from dateutil import rrule
 
+from ics import icsParser
+
 logger = logging.getLogger(__name__)
 
 class ApprovedLeaveHistoryInline(admin.TabularInline):
@@ -44,6 +46,8 @@ class EmployeeAdmin(admin.ModelAdmin):
         }),
     )
 	inlines = [ApprovedLeaveHistoryInline]
+	publicHolidayParser = icsParser()
+	publicHolidayParser.parse()
 	
 	def save_model(self,request,obj,form,change):
 		print 'Save_model'
