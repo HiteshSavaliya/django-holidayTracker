@@ -14,9 +14,9 @@ class Migration(SchemaMigration):
             ('name', self.gf('django.db.models.fields.CharField')(max_length=256)),
             ('calenderYear', self.gf('django.db.models.fields.DateField')()),
             ('startDate', self.gf('django.db.models.fields.DateField')()),
-            ('remainingLeave', self.gf('django.db.models.fields.DecimalField')(max_digits=3, decimal_places=2)),
-            ('leave', self.gf('django.db.models.fields.DecimalField')(max_digits=3, decimal_places=2)),
-            ('total', self.gf('django.db.models.fields.DecimalField')(max_digits=3, decimal_places=2)),
+            ('remainingLeave', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=2)),
+            ('leave', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=2)),
+            ('total', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=2)),
             ('leave_type', self.gf('django.db.models.fields.CharField')(max_length=2)),
         ))
         db.send_create_signal('holiTrack', ['Employee'])
@@ -32,12 +32,12 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Employee'},
             'calenderYear': ('django.db.models.fields.DateField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'leave': ('django.db.models.fields.DecimalField', [], {'max_digits': '3', 'decimal_places': '2'}),
+            'leave': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'}),
             'leave_type': ('django.db.models.fields.CharField', [], {'max_length': '2'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
-            'remainingLeave': ('django.db.models.fields.DecimalField', [], {'max_digits': '3', 'decimal_places': '2'}),
+            'remainingLeave': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'}),
             'startDate': ('django.db.models.fields.DateField', [], {}),
-            'total': ('django.db.models.fields.DecimalField', [], {'max_digits': '3', 'decimal_places': '2'})
+            'total': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'})
         }
     }
 

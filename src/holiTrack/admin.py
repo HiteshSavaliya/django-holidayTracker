@@ -31,10 +31,10 @@ class EmployeeAdmin(admin.ModelAdmin):
 #		logger.log(1, "Request %s",request)
 #		logger.log(1, "obj %s",obj)
 #		logger.log(1,"change %s", change)
-#		if change == False:
-#			self.save_new_model(request, obj, form)
-#		else:
-		self.update_existing_model(request, obj, form)
+		if change == False:
+			self.save_new_model(request, obj, form)
+		else:
+			self.update_existing_model(request, obj, form)
 		obj.save();
 		
 	def save_new_model(self,request,obj,form):
