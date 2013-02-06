@@ -38,3 +38,4 @@ class ApprovedLeaveHistory(models.Model):
     leave_start_date = models.DateField('Start Date')
     leave_end_date = models.DateField('End Date')
     associated_with_employee = models.ForeignKey(Employee)
+    leave_count = models.DecimalField ('Count',default=0.0,max_digits=5,decimal_places=2)

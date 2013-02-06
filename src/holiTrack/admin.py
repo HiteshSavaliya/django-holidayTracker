@@ -14,11 +14,11 @@ logger = logging.getLogger(__name__)
 class ApprovedLeaveHistoryInline(admin.TabularInline):
 	model = ApprovedLeaveHistory
 	can_delete = False #This will prevent history from deletion
-	readonly_fields = ('leave_start_date', 'leave_end_date')
+	readonly_fields = ('leave_start_date', 'leave_end_date','leave_count')
 	fieldsets = (
 		('History', {
             'classes': ('collapse',),
-            'fields': ('leave_start_date', 'leave_end_date')
+            'fields': ('leave_start_date', 'leave_end_date','leave_count')
         }),
     )
 
@@ -98,21 +98,15 @@ class EmployeeAdmin(admin.ModelAdmin):
 		print "Update_Existing_model"
 		
 		appliedLeave = self.calculate_applying_leave_count(request,obj)
-		if appliedLeave is None:
-			self.message_user(request, "End date smaller than begin date of holidays")
+		if appliedLeave is None or appliedLeave == 0.0:
+			self.message_user(request, "Re-check requested Date.Either 'End date smaller than begin date' or 'Applying leaves on weekend or public holiday'")
 			return
 		
 # 		Make sure applying leave is less than total allowed
 		print 'value of applied leave' + repr(appliedLeave)
 		
-#		print "from request Object"
-#		print obj.total
-#		print obj.leave
-#		print obj.remainingLeave
-		
 #		Find the object
 		e = get_object_or_404(Employee,id=obj.id)
-#		e = Employee.objects.get(name=obj)
 
 		newAppliedLeave = Decimal(e.leave) + Decimal(appliedLeave)
 		newRemainingLeave = 0.0
@@ -129,7 +123,7 @@ class EmployeeAdmin(admin.ModelAdmin):
 				#Update leave history
 				startDate = obj.leaveFrom
 				endDate = obj.leaveTo
-				e.approvedleavehistory_set.create(leave_start_date=startDate,leave_end_date=endDate)
+				e.approvedleavehistory_set.create(leave_start_date=startDate,leave_end_date=endDate,leave_count=newAppliedLeave)
 				e.save()
 				
 				obj.save()
@@ -148,14 +142,15 @@ class EmployeeAdmin(admin.ModelAdmin):
 		toDate = obj.leaveTo
 		
 		if fromDate == toDate:
-			return 1.0
+			if self.is_working_day(fromDate):
+				return 1.0
 		
 		noOfDays = 0.0;
 		if fromDate < toDate:
 			oneday = timedelta(days=1)
 			tmp = fromDate
 			while tmp <= toDate:
-				flag = tmp.isoweekday() in (1,2,3,4,5)
+				flag = self.is_working_day(tmp)
 				if (flag):
 					noOfDays +=1
 				tmp += oneday
@@ -163,7 +158,14 @@ class EmployeeAdmin(admin.ModelAdmin):
 	#		return request.POST['leave']
 		else:
 			return None	
-	
+
+#	Returns true if given date is weekday and not public holiday
+	def is_working_day(self,in_date):
+		flag = False
+		if not self.publicHolidayParser.is_holiday(in_date):
+			flag = in_date.isoweekday() in (1,2,3,4,5)
+		
+		return flag
 	
 	def no_of_days_from_start_to_end_date(self,obj):
 		if obj.calenderYear == None:

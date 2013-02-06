@@ -12,7 +12,7 @@ from datetime import date
 #from django.utils.datetime_safe import datetime
 
 class icsParser:
-    publicholidays = ()
+    publicholidays = set()
     
     def parse(self):
         print 'ICS Parse'
@@ -22,7 +22,7 @@ class icsParser:
 #       Read ics file and create 
         calData = Calendar.from_ical (open(icsFileName,'r').read())
         events = calData.walk('VEVENT')
-        
+
         for publicHoliday in events:
             holidayStartDate = publicHoliday.decoded('DTSTART')
             holidayEndDate = publicHoliday.decoded('DTEND')
@@ -30,13 +30,16 @@ class icsParser:
 #            print holidayEndDate
             
             currentYear = datetime.date.today().year
-            if holidayStartDate.year == currentYear and holidayEndDate == currentYear:
+            
+            if holidayStartDate.year == currentYear:
                 self.publicholidays.add(holidayStartDate)
-                self.publicholidays.add(holidayEndDate)
                 
-        print 'List of all holidays:', self.publicholidays
-#        self.publicholidays = set(self.list_of_publicholidays)
-#        print self.publicholidays
+            if holidayEndDate == currentYear:
+                self.publicholidays.add(holidayEndDate)
 
-    def is_holiday(self,date):
+        print self.publicholidays
+
+    def is_holiday(self,in_date):
+        if in_date is not None:
+            return in_date in self.publicholidays
         return False 
