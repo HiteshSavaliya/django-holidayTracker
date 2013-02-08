@@ -14,11 +14,11 @@ logger = logging.getLogger(__name__)
 class ApprovedLeaveHistoryInline(admin.TabularInline):
 	model = ApprovedLeaveHistory
 	can_delete = False #This will prevent history from deletion
-	readonly_fields = ('leave_start_date', 'leave_end_date','leave_count')
+	readonly_fields = ('leave_start_date', 'leave_end_date','leave_count','leave_type')
 	fieldsets = (
 		('History', {
             'classes': ('collapse',),
-            'fields': ('leave_start_date', 'leave_end_date','leave_count')
+            'fields': ('leave_start_date', 'leave_end_date','leave_count','leave_type')
         }),
     )
 
@@ -38,7 +38,7 @@ class EmployeeAdmin(admin.ModelAdmin):
             'fields': list_display
         }),
 		('Leave Details',{
-				'fields':('leaveFrom','leaveTo')
+				'fields':('leaveFrom','leaveTo','leave_type')
 			}),
         ('Options', {
             'classes': ('collapse',),
@@ -49,6 +49,14 @@ class EmployeeAdmin(admin.ModelAdmin):
 	publicHolidayParser = icsParser()
 	publicHolidayParser.parse()
 	
+	def change_view(self, request, object_id, form_url='', extra_context=None):
+		print 'Change_view called'
+		print 'ExtraContext ', extra_context
+		extra_context = extra_context or {}
+		extra_context['Save_and_add_another'] = False
+		extra_context['show_save_as_new'] = False
+		return super(EmployeeAdmin, self).change_view(request, object_id, form_url=form_url, extra_context=extra_context)
+	
 	def save_model(self,request,obj,form,change):
 		print 'Save_model'
 #		logger.log(1, "Request %s",request)
@@ -58,7 +66,7 @@ class EmployeeAdmin(admin.ModelAdmin):
 			self.save_new_model(request, obj, form)
 		else:
 			self.update_existing_model(request, obj, form)
-		
+
 	def save_new_model(self,request,obj,form):
 #		logger.log(1, "New model")
 		print 'Save New Model'
@@ -112,20 +120,23 @@ class EmployeeAdmin(admin.ModelAdmin):
 		newRemainingLeave = 0.0
 		
 		print "New applied leave " + repr(newAppliedLeave)
-		
+	
 		if Decimal(newAppliedLeave)  <= Decimal(e.total) and Decimal(newAppliedLeave) >= 0.0:
 			newRemainingLeave = Decimal(e.total) - Decimal(newAppliedLeave)
 			print "New applied Remaining " + repr(newRemainingLeave)
 			if Decimal(newRemainingLeave) >= 0.0 and Decimal(newRemainingLeave) <= Decimal(e.total):
-				obj.remainingLeave = Decimal(newRemainingLeave)
-				obj.leave = Decimal(newAppliedLeave)
-				
-				#Update leave history
+
+				#Update leave history (it can include Sick,Vacation,business trip, etc)
 				startDate = obj.leaveFrom
 				endDate = obj.leaveTo
-				e.approvedleavehistory_set.create(leave_start_date=startDate,leave_end_date=endDate,leave_count=newAppliedLeave)
+				leave_id = len(e.approvedleavehistory_set.all()) + 1 #counter
+				e.approvedleavehistory_set.create(leaveId=leave_id,leave_start_date=startDate,leave_end_date=endDate,leave_count=appliedLeave,leave_type=obj.leave_type)
 				e.save()
-				
+
+				# Update actual leave if it's vacation.
+				if int(obj.leave_type) in (2,): #Vacation in LEAVE_TYPES_CHOICES
+					obj.remainingLeave = Decimal(newRemainingLeave)
+					obj.leave = Decimal(newAppliedLeave)
 				obj.save()
 			else:
 				print 'Not Valid NUMBER'
@@ -141,6 +152,9 @@ class EmployeeAdmin(admin.ModelAdmin):
 		fromDate = obj.leaveFrom
 		toDate = obj.leaveTo
 		
+		if fromDate is None or toDate is None:
+			return
+
 		if fromDate == toDate:
 			if self.is_working_day(fromDate):
 				return 1.0
