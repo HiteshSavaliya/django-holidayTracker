@@ -165,3 +165,10 @@ if DEBUG:
     # make all loggers use the console.
     for logger in LOGGING['loggers']:
         LOGGING['loggers'][logger]['handlers'] = ['console']
+
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'hitesh.savaliya@gmail.com'
+EMAIL_HOST_PASSWORD = 'XXXXX'
+EMAIL_PORT = 587

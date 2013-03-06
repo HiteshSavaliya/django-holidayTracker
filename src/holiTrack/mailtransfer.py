@@ -3,19 +3,16 @@ Created on 6 Feb 2013
 
 @author: hitesh
 '''
-def send_email():
+def send_email(toemail,subject,body):
     import smtplib
     
     gmail_user = "hitesh.savaliya@gmail.com"
-    gmail_pwd = "xxxxxxxxxxxx"
+    gmail_pwd = "XXXXXXX"
     FROM = 'hitesh.savaliya@gmail.com'
-    TO = ['hitesh.l.savaliya@gmail.com'] #must be a list
-    SUBJECT = "Testing sending using gmail"
-    TEXT = "Testing sending mail using gmail servers"
+    TO = [toemail] #must be a list
     
     # Prepare actual message
-    message = """\From: %s\nTo: %s\nSubject: %s\n\n%s
-    """ % (FROM, ", ".join(TO), SUBJECT, TEXT)
+    message = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" % (FROM, ", ".join(TO), subject, body)
     try:
         #server = smtplib.SMTP(SERVER) 
         server = smtplib.SMTP("smtp.gmail.com", 587) #or port 465 doesn't seem to work!

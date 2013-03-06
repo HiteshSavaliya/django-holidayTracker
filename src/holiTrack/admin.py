@@ -6,6 +6,8 @@ import logging
 from datetime import timedelta
 import datetime
 from dateutil import rrule
+from django.core.mail import send_mail
+import smtplib
 
 from ics import icsParser
 
@@ -28,7 +30,7 @@ class EmployeeAdmin(admin.ModelAdmin):
 #	('Joining Date', {'fields': ['startDate']}),
 #	('Leave type', {'fields' : ['leave_type']})
 #	]
-	list_display = ('name','remainingLeave','leave','total')
+	list_display = ('name','email','remainingLeave','leave','total')
 	readonly_fields = ('remainingLeave','total','leave','calenderYear')
 	search_fields = ['name']
 #	exclude = ('calenderYear',)
@@ -135,9 +137,21 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 				# Update actual leave if it's vacation.
 				if int(obj.leave_type) in (2,): #Vacation in LEAVE_TYPES_CHOICES
+					print 'Leave type : %s' % (obj.get_leave_type_display())
 					obj.remainingLeave = Decimal(newRemainingLeave)
 					obj.leave = Decimal(newAppliedLeave)
 				obj.save()
+				
+				# send mail to employee
+				subject_Message =  "Your leave request update"
+
+				body_Message =  """Hello %s,\n\nYour leave request of type %s starting from %s to %s is approved.\n\nFollowing is detail of your leave: \n\nLeave type: %s\nLeave starting date: %s\nLeave ending date: %s\nTotal leave applied: %d\nRemaining leave: %d\n\n\nThanks,\nRegards,\nHR Apptivation
+				""" % (e.name,obj.get_leave_type_display(),startDate,endDate,obj.get_leave_type_display(),startDate,endDate,appliedLeave,obj.remainingLeave)
+				try:
+					if e.email is not None:
+						send_mail(subject_Message, body_Message, 'hitesh.savaliya@gmail.com',[e.email], fail_silently=False)
+				except (smtplib.SMTPException):
+					self.message_user(request, "Email couldn't be sent to %s" % e.email)
 			else:
 				print 'Not Valid NUMBER'
 		else:
