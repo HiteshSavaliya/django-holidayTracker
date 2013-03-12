@@ -16,10 +16,11 @@ framework.
 import os
 import sys
 
-path1 = '/Users/apptivation/django-holidayTracker/src/holidayTracker'
-path2 = '/Users/apptivation/django-holidayTracker/src'
-sys.path.append(path1)
-sys.path.append(path2)
+path = '/Library/WebServer/Documents/django-holidayTracker/src/holidayTracker/'
+if path not in sys.path:
+	sys.path.append(path)
+
+print 'Sysetm path %s' %(sys.path)
 
 #os.environ.setdefault("DJANGO_SETTINGS_MODULE", "holidayTracker.settings")
 

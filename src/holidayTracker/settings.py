@@ -12,10 +12,10 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'holiTracker',                      # Or path to database file if using sqlite3.
-        'USER': 'root',                      # Not used with sqlite3.
-        'PASSWORD': 'pass123',                  # Not used with sqlite3.
-        'HOST': '127.0.0.1',                      # Set to empty string for localhost. Not used with sqlite3.
+        'NAME': 'holidaytracker',                      # Or path to database file if using sqlite3.
+        'USER': 'holiday',                      # Not used with sqlite3.
+        'PASSWORD': 'Finns30-owns',                  # Not used with sqlite3.
+        'HOST': '10.0.1.3',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '3306',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -169,6 +169,6 @@ if DEBUG:
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'hitesh.savaliya@gmail.com'
-EMAIL_HOST_PASSWORD = 'XXXXX'
+EMAIL_HOST_USER = 'hr@apptivation.co.uk'
+EMAIL_HOST_PASSWORD = 'apptivation3102'
 EMAIL_PORT = 587
